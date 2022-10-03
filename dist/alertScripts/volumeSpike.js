@@ -41,14 +41,19 @@ const binanceClient_1 = __importDefault(require("../configurations/binanceClient
 const play_sound_1 = __importDefault(require("play-sound"));
 dotenv.config();
 let THRESHOLD_MULTIPLIER = 5;
-let SYMBOLS_TO_TRACK = ['BTC'];
+let TRAILING_WINDOW = 15;
 let playerClient = (0, play_sound_1.default)();
 function runVolumeAlertJob() {
     return __awaiter(this, void 0, void 0, function* () {
         let prices = yield binanceClient_1.default.prices();
-        console.log(prices.length);
+        let count = 0;
         for (let symbol in prices) {
+            count += 1;
             getVolumeDataAndAlert(symbol);
+            if (count % 500 == 0) {
+                console.log("Sleeping for 1 minute");
+                yield new Promise(resolve => setTimeout(resolve, 60000));
+            }
         }
     });
 }
@@ -81,10 +86,11 @@ function detectSpike(symbol, candleChartResult) {
         }
         let totalVolume = 0;
         let N = candleChartResult.length;
-        for (let i = N - 2; i >= N - 15; i--) {
+        for (let i = N - 2; i >= N - TRAILING_WINDOW; i--) {
             totalVolume += parseFloat(candleChartResult[i].volume);
         }
-        let isTrigger = (totalVolume / N) * THRESHOLD_MULTIPLIER < parseFloat(candleChartResult[N - 1].volume);
+        let averageVolume = totalVolume / TRAILING_WINDOW;
+        let isTrigger = averageVolume * THRESHOLD_MULTIPLIER < parseFloat(candleChartResult[N - 1].volume);
         if (isTrigger) {
             console.log({
                 volume: parseFloat(candleChartResult[N - 1].volume),
@@ -92,6 +98,7 @@ function detectSpike(symbol, candleChartResult) {
                 endTime: new Date(candleChartResult[N - 1].closeTime),
                 symbol: symbol
             });
+            yield sendSignal();
         }
     });
 }

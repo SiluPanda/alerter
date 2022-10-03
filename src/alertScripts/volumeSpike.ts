@@ -7,15 +7,22 @@ dotenv.config()
 
 
 let THRESHOLD_MULTIPLIER = 5
-let SYMBOLS_TO_TRACK = ['BTC']
+let TRAILING_WINDOW = 15
 let playerClient = player()
 
 export async function runVolumeAlertJob() {
     let prices = await binance.prices()
-    console.log(prices.length)
+    let count = 0
     for (let symbol in prices) {
-       getVolumeDataAndAlert(symbol)
+        count += 1
+        getVolumeDataAndAlert(symbol)
+
+        if (count%500 == 0) {
+            console.log("Sleeping for 1 minute")
+            await new Promise(resolve => setTimeout(resolve, 60000))
+        }
     }
+    
 }
 
 /**
@@ -46,10 +53,11 @@ export async function detectSpike(symbol: string, candleChartResult: CandleChart
     }
     let totalVolume = 0
     let N =  candleChartResult.length
-    for (let i = N - 2; i >= N - 15; i--) {
+    for (let i = N - 2; i >= N - TRAILING_WINDOW; i--) {
         totalVolume += parseFloat(candleChartResult[i].volume)
     }
-    let isTrigger = (totalVolume / N) * THRESHOLD_MULTIPLIER < parseFloat(candleChartResult[N - 1].volume)
+    let averageVolume = totalVolume / TRAILING_WINDOW
+    let isTrigger = averageVolume * THRESHOLD_MULTIPLIER < parseFloat(candleChartResult[N - 1].volume)
     if (isTrigger) {
         console.log({
             volume: parseFloat(candleChartResult[N-1].volume),
@@ -57,6 +65,7 @@ export async function detectSpike(symbol: string, candleChartResult: CandleChart
             endTime: new Date(candleChartResult[N-1].closeTime),
             symbol: symbol
         })
+        await sendSignal()
     }
 
 }
@@ -71,3 +80,4 @@ export async function sendSignal() {
         }
     })
 }
+
