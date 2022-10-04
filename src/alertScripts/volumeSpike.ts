@@ -3,6 +3,7 @@ import { CandleChartResult } from 'binance-api-node'
 import * as dotenv from 'dotenv'
 import binance from '../configurations/binanceClient'
 import player from 'play-sound'
+import path from 'path'
 dotenv.config()
 
 
@@ -73,6 +74,7 @@ export async function detectSpike(symbol: string, candleChartResult: CandleChart
  * Send signal incase of a spike
  */
 export async function sendSignal() {
+    let alertMp3Path = path.resolve(__dirname)
     playerClient.play('alert.mp3', err => {
         if (err) {
             console.log(err)

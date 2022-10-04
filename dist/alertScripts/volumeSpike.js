@@ -39,6 +39,7 @@ exports.sendSignal = exports.detectSpike = exports.getVolumeDataAndAlert = expor
 const dotenv = __importStar(require("dotenv"));
 const binanceClient_1 = __importDefault(require("../configurations/binanceClient"));
 const play_sound_1 = __importDefault(require("play-sound"));
+const path_1 = __importDefault(require("path"));
 dotenv.config();
 let THRESHOLD_MULTIPLIER = 5;
 let TRAILING_WINDOW = 15;
@@ -108,9 +109,10 @@ exports.detectSpike = detectSpike;
  */
 function sendSignal() {
     return __awaiter(this, void 0, void 0, function* () {
+        let alertMp3Path = path_1.default.resolve(__dirname);
         playerClient.play('alert.mp3', err => {
             if (err) {
-                throw err;
+                console.log(err);
             }
         });
     });
