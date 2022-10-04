@@ -2,14 +2,13 @@ import axios from 'axios'
 import { CandleChartResult } from 'binance-api-node'
 import * as dotenv from 'dotenv'
 import binance from '../configurations/binanceClient'
-import player from 'play-sound'
+import sound from 'sound-play'
 import path from 'path'
 dotenv.config()
 
 
 let THRESHOLD_MULTIPLIER = 5
 let TRAILING_WINDOW = 15
-let playerClient = player()
 
 export async function runVolumeAlertJob() {
     let prices = await binance.prices()
@@ -75,10 +74,6 @@ export async function detectSpike(symbol: string, candleChartResult: CandleChart
  */
 export async function sendSignal() {
     let alertMp3Path = path.resolve(__dirname)
-    playerClient.play('alert.mp3', err => {
-        if (err) {
-            console.log(err)
-        }
-    })
+    sound.play('alert.mp3')
 }
 

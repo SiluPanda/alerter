@@ -23,9 +23,11 @@
     "mongodb": "^4.4.1",
     "node-cron": "^3.0.2",
     "play-sound": "^1.1.5",
+    "sound-play": "^1.1.0",
     "typescript": "^4.6.2"
   },
   "devDependencies": {
-    "@types/play-sound": "^1.1.0"
+    "@types/play-sound": "^1.1.0",
+    "@types/sound-play": "^1.1.0"
   }
 }

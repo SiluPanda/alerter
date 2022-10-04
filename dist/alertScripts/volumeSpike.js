@@ -38,12 +38,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendSignal = exports.detectSpike = exports.getVolumeDataAndAlert = exports.runVolumeAlertJob = void 0;
 const dotenv = __importStar(require("dotenv"));
 const binanceClient_1 = __importDefault(require("../configurations/binanceClient"));
-const play_sound_1 = __importDefault(require("play-sound"));
+const sound_play_1 = __importDefault(require("sound-play"));
 const path_1 = __importDefault(require("path"));
 dotenv.config();
 let THRESHOLD_MULTIPLIER = 5;
 let TRAILING_WINDOW = 15;
-let playerClient = (0, play_sound_1.default)();
 function runVolumeAlertJob() {
     return __awaiter(this, void 0, void 0, function* () {
         let prices = yield binanceClient_1.default.prices();
@@ -110,11 +109,7 @@ exports.detectSpike = detectSpike;
 function sendSignal() {
     return __awaiter(this, void 0, void 0, function* () {
         let alertMp3Path = path_1.default.resolve(__dirname);
-        playerClient.play('alert.mp3', err => {
-            if (err) {
-                console.log(err);
-            }
-        });
+        sound_play_1.default.play('alert.mp3');
     });
 }
 exports.sendSignal = sendSignal;
