@@ -48,11 +48,8 @@ function runVolumeAlertJob() {
         let prices = yield binanceClient_1.default.prices();
         let count = 0;
         for (let symbol in prices) {
-            count += 1;
-            getVolumeDataAndAlert(symbol);
-            if (count % 500 == 0) {
-                console.log("Sleeping for 1 minute");
-                yield new Promise(resolve => setTimeout(resolve, 60000));
+            if (symbol.includes('USD')) {
+                getVolumeDataAndAlert(symbol);
             }
         }
     });
@@ -65,7 +62,7 @@ exports.runVolumeAlertJob = runVolumeAlertJob;
 function getVolumeDataAndAlert(symbol) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            let candles = yield binanceClient_1.default.candles({ symbol: 'BNBBTC', interval: '15m' });
+            let candles = yield binanceClient_1.default.candles({ symbol: symbol, interval: '15m' });
             yield detectSpike(symbol, candles);
         }
         catch (error) {

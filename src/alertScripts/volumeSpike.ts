@@ -14,15 +14,11 @@ export async function runVolumeAlertJob() {
     let prices = await binance.prices()
     let count = 0
     for (let symbol in prices) {
-        count += 1
-        getVolumeDataAndAlert(symbol)
+        if (symbol.includes('USD')) {
+            getVolumeDataAndAlert(symbol)
 
-        if (count%500 == 0) {
-            console.log("Sleeping for 1 minute")
-            await new Promise(resolve => setTimeout(resolve, 60000))
         }
     }
-    
 }
 
 /**
@@ -32,7 +28,7 @@ export async function runVolumeAlertJob() {
 export async function getVolumeDataAndAlert(symbol: string) {
     try {
     
-        let candles = await binance.candles({symbol: 'BNBBTC', interval: '15m'})
+        let candles = await binance.candles({symbol: symbol, interval: '15m'})
         
        await detectSpike(symbol, candles)
     } catch (error) {
