@@ -89,12 +89,15 @@ function detectSpike(symbol, candleChartResult) {
         let averageVolume = totalVolume / TRAILING_WINDOW;
         let isTrigger = averageVolume * THRESHOLD_MULTIPLIER < parseFloat(candleChartResult[N - 1].volume);
         if (isTrigger) {
+            console.log("NEW VOLUME ALERT");
+            console.log("==================================");
             console.log({
                 volume: parseFloat(candleChartResult[N - 1].volume),
                 startTime: new Date(candleChartResult[N - 1].openTime),
                 endTime: new Date(candleChartResult[N - 1].closeTime),
                 symbol: symbol
             });
+            console.log();
             yield sendSignal();
         }
     });

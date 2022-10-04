@@ -55,12 +55,15 @@ export async function detectSpike(symbol: string, candleChartResult: CandleChart
     let averageVolume = totalVolume / TRAILING_WINDOW
     let isTrigger = averageVolume * THRESHOLD_MULTIPLIER < parseFloat(candleChartResult[N - 1].volume)
     if (isTrigger) {
+        console.log("NEW VOLUME ALERT")
+        console.log("==================================")
         console.log({
             volume: parseFloat(candleChartResult[N-1].volume),
             startTime: new Date(candleChartResult[N-1].openTime),
             endTime: new Date(candleChartResult[N-1].closeTime),
             symbol: symbol
         })
+        console.log()
         await sendSignal()
     }
 
@@ -72,7 +75,7 @@ export async function detectSpike(symbol: string, candleChartResult: CandleChart
 export async function sendSignal() {
     playerClient.play('alert.mp3', err => {
         if (err) {
-            throw err
+            console.log(err)
         }
     })
 }

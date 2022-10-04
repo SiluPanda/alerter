@@ -8,9 +8,14 @@ async function setup() {
 }
 setup()
 
-cron.schedule('* */15 * * * *', async () => {
+cron.schedule('0 */15 * * * *', async () => {
     console.log("Starting volume alert job")
-    await runVolumeAlertJob()
+    try {
+        await runVolumeAlertJob()
+    } catch(error) {
+        console.log(error)
+    }
+   
 })
 
 

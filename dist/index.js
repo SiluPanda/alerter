@@ -40,8 +40,13 @@ function setup() {
     });
 }
 setup();
-cron.schedule('* */15 * * * *', () => __awaiter(void 0, void 0, void 0, function* () {
+cron.schedule('0 */15 * * * *', () => __awaiter(void 0, void 0, void 0, function* () {
     console.log("Starting volume alert job");
-    yield (0, volumeSpike_1.runVolumeAlertJob)();
+    try {
+        yield (0, volumeSpike_1.runVolumeAlertJob)();
+    }
+    catch (error) {
+        console.log(error);
+    }
 }));
 //# sourceMappingURL=index.js.map
