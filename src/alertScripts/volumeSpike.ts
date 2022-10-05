@@ -78,7 +78,7 @@ export async function sendSignal() {
         let alertMp3Path = path.resolve(process.cwd(), "alert.mp3")
         console.log(alertMp3Path)
         playerClient.play(alertMp3Path, (error) => {
-            console.log(`Error while playing sound, reason: ${error}`)
+            if (error) console.log(`Error while playing sound, reason: ${error}`)
         })
     } catch (error) {
         console.log(error)
