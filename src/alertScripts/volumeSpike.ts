@@ -4,6 +4,7 @@ import * as dotenv from 'dotenv'
 import binance from '../configurations/binanceClient'
 import player from 'play-sound'
 import path from 'path'
+import excludedSymbols from './excludedSymbols'
 dotenv.config()
 
 
@@ -15,11 +16,12 @@ export async function runVolumeAlertJob() {
     let prices = await binance.prices()
     let count = 0
     for (let symbol in prices) {
-        if (symbol.includes('USDT')) {
-            getVolumeDataAndAlert(symbol)
-
+        if (symbol.includes('USDT') && !excludedSymbols.includes(symbol)) {
+            console.log(`Fetching volume data for symbol ${symbol}`)
+            await getVolumeDataAndAlert(symbol)
         }
     }
+    console.log(count)
 }
 
 /**
@@ -45,7 +47,7 @@ export async function getVolumeDataAndAlert(symbol: string) {
  * @returns boolean representing if there is a spike
  */
 export async function detectSpike(symbol: string, candleChartResult: CandleChartResult[]) {
-    if (candleChartResult.length === 0) {
+    if (candleChartResult.length < TRAILING_WINDOW) {
         return false
     }
     let totalVolume = 0
