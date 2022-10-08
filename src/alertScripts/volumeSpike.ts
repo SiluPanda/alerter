@@ -16,7 +16,12 @@ export async function runVolumeAlertJob() {
     let prices = await binance.prices()
     let count = 0
     for (let symbol in prices) {
-        if (symbol.includes('USDT') && !excludedSymbols.includes(symbol)) {
+        if (symbol.includes('USDT') 
+            && !excludedSymbols.includes(symbol)
+            && !symbol.includes('UPUSDT')
+            && !symbol.includes('DOWNUSDT')
+            && !symbol.includes('BEARUSDT')
+            && !symbol.includes('BULLUSDT')) {
             console.log(`Fetching volume data for symbol ${symbol}`)
             await getVolumeDataAndAlert(symbol)
         }
